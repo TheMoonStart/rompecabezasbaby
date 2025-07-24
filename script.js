@@ -27,6 +27,12 @@ function createPieces() {
       piece.dataset.source = "tray";
       piece.draggable = true;
       piece.addEventListener("dragstart", handleDragStart);
+      
+      // Eventos táctiles para dispositivos móviles
+      piece.addEventListener("touchstart", handleTouchStart, { passive: false });
+      piece.addEventListener("touchmove", handleTouchMove, { passive: false });
+      piece.addEventListener("touchend", handleTouchEnd);
+
       pieces.push(piece);
     }
   }
@@ -37,6 +43,7 @@ function createPieces() {
 
 let draggedPiece = null;
 let originContainer = null;
+let touchOffset = { x: 0, y: 0 };
 
 function handleDragStart(e) {
   draggedPiece = e.target;
@@ -77,6 +84,62 @@ document.addEventListener("dragend", () => {
   if (draggedPiece) draggedPiece.classList.remove("hidden");
   draggedPiece = null;
 });
+
+// Eventos touch
+function handleTouchStart(e) {
+  e.preventDefault();
+  draggedPiece = e.target;
+  originContainer = draggedPiece.parentNode;
+
+  const touch = e.touches[0];
+  const rect = draggedPiece.getBoundingClientRect();
+  touchOffset.x = touch.clientX - rect.left;
+  touchOffset.y = touch.clientY - rect.top;
+
+  draggedPiece.style.position = "absolute";
+  draggedPiece.style.zIndex = "1000";
+}
+
+function handleTouchMove(e) {
+  if (!draggedPiece) return;
+
+  const touch = e.touches[0];
+  draggedPiece.style.left = `${touch.clientX - touchOffset.x}px`;
+  draggedPiece.style.top = `${touch.clientY - touchOffset.y}px`;
+}
+
+function handleTouchEnd(e) {
+  if (!draggedPiece) return;
+
+  draggedPiece.style.position = "";
+  draggedPiece.style.zIndex = "";
+  draggedPiece.style.left = "";
+  draggedPiece.style.top = "";
+
+  const touch = e.changedTouches[0];
+  const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
+  const targetSlot = targetElement?.closest(".slot");
+
+  if (targetSlot && !targetSlot.contains(draggedPiece)) {
+    if (targetSlot.firstChild) {
+      const replacedPiece = targetSlot.firstChild;
+      if (originContainer.classList.contains("pieces-container")) {
+        container.appendChild(replacedPiece);
+      } else {
+        originContainer.appendChild(replacedPiece);
+      }
+    }
+
+    targetSlot.innerHTML = "";
+    targetSlot.appendChild(draggedPiece);
+    draggedPiece.dataset.source = "board";
+  } else {
+    originContainer.appendChild(draggedPiece);
+  }
+
+  draggedPiece = null;
+  checkComplete();
+}
 
 function checkComplete() {
   const slots = document.querySelectorAll(".slot");
