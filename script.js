@@ -27,8 +27,8 @@ function createPieces() {
       piece.dataset.source = "tray";
       piece.draggable = true;
       piece.addEventListener("dragstart", handleDragStart);
-      
-      // Eventos táctiles para dispositivos móviles
+
+      // Eventos táctiles
       piece.addEventListener("touchstart", handleTouchStart, { passive: false });
       piece.addEventListener("touchmove", handleTouchMove, { passive: false });
       piece.addEventListener("touchend", handleTouchEnd);
@@ -58,7 +58,6 @@ function handleDrop(e) {
 
   const targetSlot = e.target.closest(".slot");
 
-  // Si ya hay una pieza, devuélvela a la bandeja o al slot anterior
   if (targetSlot && !targetSlot.contains(draggedPiece)) {
     if (targetSlot.firstChild) {
       const replacedPiece = targetSlot.firstChild;
@@ -85,7 +84,7 @@ document.addEventListener("dragend", () => {
   draggedPiece = null;
 });
 
-// Eventos touch
+// TOUCH para móviles con animación
 function handleTouchStart(e) {
   e.preventDefault();
   draggedPiece = e.target;
@@ -96,29 +95,35 @@ function handleTouchStart(e) {
   touchOffset.x = touch.clientX - rect.left;
   touchOffset.y = touch.clientY - rect.top;
 
+  draggedPiece.style.transition = "none";
   draggedPiece.style.position = "absolute";
   draggedPiece.style.zIndex = "1000";
+  draggedPiece.style.pointerEvents = "none";
 }
 
 function handleTouchMove(e) {
   if (!draggedPiece) return;
 
   const touch = e.touches[0];
-  draggedPiece.style.left = `${touch.clientX - touchOffset.x}px`;
-  draggedPiece.style.top = `${touch.clientY - touchOffset.y}px`;
+  const x = touch.clientX - touchOffset.x;
+  const y = touch.clientY - touchOffset.y;
+
+  draggedPiece.style.transform = `translate(${x}px, ${y}px)`;
 }
 
 function handleTouchEnd(e) {
   if (!draggedPiece) return;
 
+  const touch = e.changedTouches[0];
+  const dropTarget = document.elementFromPoint(touch.clientX, touch.clientY);
+  const targetSlot = dropTarget?.closest(".slot");
+
+  // Restaurar estilos
+  draggedPiece.style.transition = "transform 0.2s ease";
+  draggedPiece.style.transform = "none";
   draggedPiece.style.position = "";
   draggedPiece.style.zIndex = "";
-  draggedPiece.style.left = "";
-  draggedPiece.style.top = "";
-
-  const touch = e.changedTouches[0];
-  const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
-  const targetSlot = targetElement?.closest(".slot");
+  draggedPiece.style.pointerEvents = "";
 
   if (targetSlot && !targetSlot.contains(draggedPiece)) {
     if (targetSlot.firstChild) {
