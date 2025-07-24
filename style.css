@@ -1,0 +1,209 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap');
+
+body {
+  font-family: 'Quicksand', sans-serif;
+  background: #fff0f5;
+  margin: 0;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  box-sizing: border-box;
+  color: #333;
+}
+
+h2 {
+  margin-bottom: 30px;
+  font-size: 2rem;
+  color: #e91e63;
+  text-align: center;
+}
+
+h4 {
+  margin-bottom: 10px;
+  color: #444;
+  font-weight: 600;
+}
+
+/* Contenedor principal */
+.game-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* Subcontenedor: Referencia + rompecabezas */
+.puzzle-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 40px;
+  width: 100%;
+}
+
+/* Imagen de referencia */
+.reference {
+  text-align: center;
+  min-width: 180px;
+}
+
+.reference img {
+  width: 100%;
+  max-width: 180px;
+  border: 4px solid #e0e0e0;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+}
+
+.reference img:hover {
+  transform: scale(1.03);
+}
+
+/* Área de juego */
+.game-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 320px;
+  margin-top: 20px;
+}
+
+/* CENTRADO FORZADO DEL TABLERO */
+.puzzle-board {
+  width: 320px;
+  height: 320px;
+  border: 2px dashed #ccc;
+  background-color: #fff;
+  border-radius: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  position: relative;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.3s ease;
+
+  /* 🔽 ESTE ES EL CAMBIO CLAVE PARA CENTRAR */
+  margin: 0 auto;
+}
+
+.puzzle-board:hover {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+}
+
+
+.pieces-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 25px;
+  max-width: 500px;
+  padding: 0 10px;
+}
+
+
+.piece {
+  width: 80px;
+  height: 80px;
+  background-image: url('rompecabezas_320x320.jpg');
+  background-size: 320px 320px;
+  cursor: grab;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  clip-path: polygon(10% 0%, 90% 0%, 100% 10%, 100% 90%, 90% 100%, 10% 100%, 0% 90%, 0% 10%);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.piece:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.piece:active {
+  transform: scale(1.08);
+}
+
+
+.slot {
+  width: 80px;
+  height: 80px;
+  box-sizing: border-box;
+  border: 1px dashed transparent;
+  clip-path: polygon(10% 0%, 90% 0%, 100% 10%, 100% 90%, 90% 100%, 10% 100%, 0% 90%, 0% 10%);
+}
+
+
+.piece.hidden {
+  display: none;
+}
+
+
+@media (max-width: 768px) {
+  .puzzle-wrapper {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .reference img {
+    max-width: 150px;
+  }
+
+  .puzzle-board {
+    width: 280px;
+    height: 280px;
+  }
+
+  .piece, .slot {
+    width: 70px;
+    height: 70px;
+  }
+
+  .pieces-container {
+    max-width: 350px;
+  }
+}
+
+
+.modal {
+  display: none; 
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+  background-color: #fff;
+  margin: 15% auto;
+  padding: 20px;
+  border-radius: 8px;
+  width: 80%;
+  max-width: 400px;
+  text-align: center;
+  font-family: 'Quicksand', sans-serif;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close:hover {
+  color: #000;
+}
